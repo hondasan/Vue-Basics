@@ -9,15 +9,19 @@
             height: 200px;
             width: 200px;
         }
+
         .box.two {
             background-color: red;
         }
+
         .box.three {
             background-color: blue;
         }
+
         [v-cloak] {
             display: none;
         }
+
         input {
             margin: 10px;
             display: block;
@@ -44,7 +48,7 @@
                     isVisible: false,
                 }
             },
-            methods : {
+            methods: {
                 toggleBox() {
                     this.isVisible = !this.isVisible;
                 },
@@ -52,43 +56,56 @@
                     console.log(greeting);
                 }
             }
-            
+
         })
 
         app.component('login-form', {
-            template:`
+            template: `
                 <form @submit.prevent="handleSubmit">
                     <h1>{{ title }}</h1>
-                    <custom-input v-model="email" :label="emailLabel" />
-                    <custom-input v-model="password" :label="passwordLabel" />
+                    <custom-input
+                        v-for="(input, i) in inputs"
+                        :key="i"
+                        v-model="input.value" 
+                        :label="input.label" 
+                        :type="input.type"
+                     />
                     <button>Login</button>    
                 </form>
             `,
-            components:['custom-input'],
+            components: ['custom-input'],
             data() {
                 return {
                     title: 'Login Form',
-                    email:'',
-                    password:'',
-                    emailLabel: 'Email',
-                    passwordLabel:'Password'
+                    inputs: [
+                        {
+                            label: 'Email',
+                            value: '',
+                            type: 'email'
+                        },
+                        {
+                            label: 'Password',
+                            value: '',
+                            type: 'password'
+                        }
+                    ],
                 }
             },
             methods: {
                 handleSubmit() {
-                    console.log(this.email, this.password);
+                    console.log(this.inputs[0].value, this.inputs[1].value);
                 }
             }
         })
-        app.component('custom-input',{
-            template:`
+        app.component('custom-input', {
+            template: `
                 <label>
                     {{ label }}
-                    <input type="text" v-model="inputValue">
+                    <input :type="type" v-model="inputValue">
                 </label>
             `,
-            props:['label', 'modelValue'],
-            computed: {
+            props: ['label', 'type', 'modelValue'],
+            computed: { 
                 inputValue: {
                     get() {
                         return this.modelValue
